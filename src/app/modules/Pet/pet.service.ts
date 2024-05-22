@@ -34,7 +34,7 @@ const getAllPetsFromDB = async (params: any, options: TPaginationOptions) => {
     });
   }
 
-  const whereConditions: Prisma.PetWhereInput = { AND: andConditions };
+  const whereConditions = andConditions.length > 0 ? { AND: andConditions } : {};
 
   // find many
   const result = await prisma.pet.findMany({

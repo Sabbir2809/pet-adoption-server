@@ -26,9 +26,9 @@ adoptionRequestRouter.post(
 );
 
 // Update Adoption Request Status
-// Endpoint: PUT - BASE-URL/api/v1/adoption/request/:requestId
+// Endpoint: PATCH - BASE-URL/api/v1/adoption/request/:id
 // Request Headers: Authorization: <JWT_TOKEN>
-adoptionRequestRouter.put(
+adoptionRequestRouter.patch(
   "/request/:id",
   checkAuth(UserRole.ADMIN),
   validationRequest(AdoptionRequestValidationSchemes.updateSubmitAdoptionRequestStatus),
