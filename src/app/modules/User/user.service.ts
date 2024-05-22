@@ -1,27 +1,4 @@
-import { User } from "@prisma/client";
-import bcrypt from "bcrypt";
 import prisma from "../../utils/prisma";
-
-const registrationIntoDB = async (payload: User) => {
-  // password hashing
-  const hashPassword: string = await bcrypt.hash(payload.password, 8);
-
-  // create user
-  const result = await prisma.user.create({
-    data: {
-      ...payload,
-      password: hashPassword,
-    },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-  return result;
-};
 
 const getProfileInformationFromDB = async (userId: string) => {
   const result = await prisma.user.findUniqueOrThrow({
@@ -73,7 +50,6 @@ const updateUserInformationInto = async (
 };
 
 export const UserServices = {
-  registrationIntoDB,
   getProfileInformationFromDB,
   updateUserInformationInto,
 };

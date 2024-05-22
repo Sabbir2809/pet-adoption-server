@@ -6,16 +6,8 @@ import { UserControllers } from "./user.controller";
 import { UserValidationSchemas } from "./user.validation";
 const userRouter = Router();
 
-// User Registration
-// Endpoint: POST - BASE-URL/api/v1/register
-userRouter.post(
-  "/register",
-  validationRequest(UserValidationSchemas.registration),
-  UserControllers.registration
-);
-
 // Get User Information
-// Endpoint: GET - BASE-URL/api/v1/profile
+// Endpoint: GET - BASE-URL/api/v1/user/profile
 // Request Headers: Authorization: <JWT_TOKEN>
 userRouter.get(
   "/profile",
@@ -24,7 +16,7 @@ userRouter.get(
 );
 
 // Update User Information
-// Endpoint: PUT - BASE-URL/api/v1/profile
+// Endpoint: PUT - BASE-URL/api/v1/user/profile
 // Request Headers: Authorization: <JWT_TOKEN>
 userRouter.put(
   "/profile",

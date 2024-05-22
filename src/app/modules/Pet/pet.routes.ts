@@ -9,13 +9,13 @@ const petRoute = Router();
 // Get Paginated and Filtered Pets
 // Endpoint: GET - BASE-URL/api/v1/pets
 // Request Headers: Authorization: <JWT_TOKEN>
-petRoute.get("/pets", checkAuth(), PetControllers.getAllPets);
+petRoute.get("/", checkAuth(), PetControllers.getAllPets);
 
 // Add a Pet
 // Endpoint: POST - BASE-URL/api/v1/pets
 // Request Headers: Authorization: <JWT_TOKEN>
 petRoute.post(
-  "/pets",
+  "/",
   checkAuth(UserRole.ADMIN),
   validationRequest(PetValidationSchemas.addPet),
   PetControllers.addPet
@@ -25,7 +25,7 @@ petRoute.post(
 // Endpoint: PUT - BASE-URL/api/v1/pets/:petId
 // Request Headers: Authorization: <JWT_TOKEN>
 petRoute.put(
-  "/pets/:petId",
+  "/:petId",
   checkAuth(UserRole.ADMIN),
   validationRequest(PetValidationSchemas.updatePetProfile),
   PetControllers.updatePetProfile
