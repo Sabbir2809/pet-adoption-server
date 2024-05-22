@@ -1,9 +1,9 @@
 import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { Secret } from "jsonwebtoken";
+import { JwtPayload, Secret } from "jsonwebtoken";
 import config from "../../config";
 import AppError from "../../errors/AppError";
-import { generateToken } from "../../utils/JWT";
+import { generateToken, verifyToken } from "../../utils/JWT";
 import prisma from "../../utils/prisma";
 
 const registrationIntoDB = async (payload: User) => {
@@ -48,33 +48,104 @@ const loginFromDB = async (payload: { email: string; password: string }) => {
     },
   });
 
-  // password check
-  const isCorrectPassword = await bcrypt.compare(payload.password, userData.password);
+  const { password, needPasswordChange, id: userId, role, email } = userData;
+
+  // password compare
+  const isCorrectPassword = await bcrypt.compare(payload.password, password);
   if (!isCorrectPassword) {
     throw new AppError(401, "Password Incorrect!");
   }
 
-  // generate token
-  const jwtPayload = {
-    userId: userData.id,
-    username: userData.username,
-    email: userData.email,
-  };
+  // access token
   const accessToken = generateToken(
-    jwtPayload,
+    { userId, email, role },
+    config.jwt.jwt_secret as Secret,
+    config.jwt.jwt_expires_in as string
+  );
+
+  // access token
+  const refreshToken = generateToken(
+    { userId, email, role },
+    config.jwt.refresh_jwt_secret as Secret,
+    config.jwt.refresh_jwt_expires_in as string
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+    needPasswordChange,
+  };
+};
+
+const refreshToken = async (token: string) => {
+  let decodedData = null;
+  try {
+    decodedData = verifyToken(token, config.jwt.refresh_jwt_secret as string);
+  } catch (error) {
+    throw new AppError(403, "Invalid Refresh Token");
+  }
+
+  const { userId, email, role } = decodedData;
+
+  const isUserExist = await prisma.user.findUnique({
+    where: {
+      id: userId,
+      email: email,
+      isActive: true,
+    },
+  });
+  if (!isUserExist) {
+    throw new AppError(404, "User does not exist");
+  }
+
+  const newAccessToken = generateToken(
+    { userId, email, role },
     config.jwt.jwt_secret as Secret,
     config.jwt.jwt_expires_in as string
   );
 
   return {
-    id: userData.id,
-    username: userData.username,
-    email: userData.email,
-    token: accessToken,
+    accessToken: newAccessToken,
+  };
+};
+
+const changePasswordIntoDB = async (
+  user: JwtPayload,
+  payload: { oldPassword: string; newPassword: string }
+) => {
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: user.userId,
+      email: user.email,
+      isActive: true,
+    },
+  });
+
+  const isCorrectPassword: boolean = await bcrypt.compare(payload.oldPassword, userData.password);
+  if (!isCorrectPassword) {
+    throw new Error("Password Incorrect!");
+  }
+
+  const hashPassword: string = await bcrypt.hash(payload.newPassword, 8);
+
+  await prisma.user.update({
+    where: {
+      id: user.userId,
+      email: userData.email,
+    },
+    data: {
+      password: hashPassword,
+    },
+  });
+
+  return {
+    success: true,
   };
 };
 
 export const AuthServices = {
-  loginFromDB,
   registrationIntoDB,
+  loginFromDB,
+  refreshToken,
+  changePasswordIntoDB,
 };
