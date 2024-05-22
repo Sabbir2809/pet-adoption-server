@@ -20,12 +20,17 @@
 1. Setup environment variables:
 
    ```js
-   NODE_DEV = development;
-   PORT = your_port_number;
+   NODE_ENV = development;
+   PORT = 5000;
    DATABASE_URL = your_postgres_url;
    BCRYPT_SALT_ROUNDS = your_bcrypt_salt_rounds;
    JWT_SECRET = your_jwt_secret;
    JWT_EXPIRES_IN = your_jwt_expires_in;
+   REFRESH_JWT_SECRET = your_refresh_jwt_secret;
+   REFRESH_JWT_EXPIRES_IN = your_refresh_jwt_expires_in;
+   CLOUDINARY_CLOUD_NAME = your_cloudinary_cloud_name;
+   CLOUDINARY_API_KEY = your_cloudinary_api_key;
+   CLOUDINARY_API_SECRET = your_cloudinary_api_secret;
    ```
 
 ## Technology Stack
@@ -51,7 +56,7 @@
 
 ## API Documentation
 
-[Postman API Documentation Live Link](https://documenter.getpostman.com/view/15226030/2sA35Ea3VU)
+[Postman API Documentation Live Link]()
 
 ## Entity Relationship Diagram
 

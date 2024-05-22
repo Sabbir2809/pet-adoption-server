@@ -10,10 +10,8 @@ export default {
   jwt: {
     jwt_secret: process.env.JWT_SECRET,
     jwt_expires_in: process.env.JWT_EXPIRES_IN,
-    refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
-    refresh_expires_in: process.env.REFRESH_EXPIRES_IN,
-    reset_password_secret: process.env.RESET_PASSWORD_TOKEN,
-    reset_expires_in: process.env.RESET_EXPIRES_IN,
+    refresh_jwt_secret: process.env.REFRESH_JWT_SECRET,
+    refresh_jwt_expires_in: process.env.REFRESH_JWT_EXPIRES_IN,
   },
   cloudinary: {
     cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
