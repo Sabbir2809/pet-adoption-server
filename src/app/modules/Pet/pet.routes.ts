@@ -40,4 +40,6 @@ petRoute.patch(
   }
 );
 
+petRoute.delete("/:petId", checkAuth(UserRole.ADMIN), PetControllers.deletePetProfile);
+
 export const PetRoutes = petRoute;

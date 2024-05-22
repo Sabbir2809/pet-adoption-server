@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { Request } from "express";
+import AppError from "../../errors/AppError";
 import { TFile } from "../../types/cloudinary";
 import { TPaginationOptions } from "../../types/pagination";
 import { fileUploader } from "../../utils/fileUploader";
@@ -127,9 +128,37 @@ const updatePetProfileIntoDB = async (petId: string, req: Request) => {
   };
 };
 
+const deletePetProfileIntoDB = async (petId: string) => {
+  const isExistPet = await prisma.pet.findUniqueOrThrow({
+    where: {
+      id: petId,
+    },
+  });
+
+  // checking isAdoptionPet
+  const isAdoptionPet = await prisma.adoptionRequest.findFirst({
+    where: {
+      petId: isExistPet.id,
+    },
+  });
+  if (isAdoptionPet) {
+    throw new AppError(400, "Can not delete of Pet Profile because of the adoption");
+  }
+
+  // update
+  await prisma.pet.delete({
+    where: {
+      id: isExistPet.id,
+    },
+  });
+
+  return null;
+};
+
 export const PetServices = {
   addPetIntoDB,
   updatePetProfileIntoDB,
   getAllPetsFromDB,
   getPetDetailsFromDB,
+  deletePetProfileIntoDB,
 };
