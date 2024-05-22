@@ -1,28 +1,30 @@
 import { UserRole } from "@prisma/client";
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import checkAuth from "../../middlewares/CheckAuth";
-import validationRequest from "../../middlewares/validationRequest";
+import { fileUploader } from "../../utils/fileUploader";
 import { UserControllers } from "./user.controller";
-import { UserValidationSchemas } from "./user.validation";
 const userRouter = Router();
 
-// Get User Information
-// Endpoint: GET - BASE-URL/api/v1/user/profile
+// Get My Profile
+// Endpoint: GET - BASE-URL/api/v1/user/my-profile
 // Request Headers: Authorization: <JWT_TOKEN>
 userRouter.get(
-  "/profile",
+  "/my-profile",
   checkAuth(UserRole.ADMIN, UserRole.USER),
-  UserControllers.getProfileInformation
+  UserControllers.getMyProfile
 );
 
-// Update User Information
-// Endpoint: PUT - BASE-URL/api/v1/user/profile
+// Update My Profile
+// Endpoint: PATCH - BASE-URL/api/v1/user/update-my-profile
 // Request Headers: Authorization: <JWT_TOKEN>
-userRouter.put(
-  "/profile",
+userRouter.patch(
+  "/update-my-profile",
   checkAuth(UserRole.ADMIN, UserRole.USER),
-  validationRequest(UserValidationSchemas.updateUserProfile),
-  UserControllers.updateUserInformation
+  fileUploader.upload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    return UserControllers.updateMyProfile(req, res, next);
+  }
 );
 
 export const UserRoutes = userRouter;

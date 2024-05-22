@@ -4,9 +4,9 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { UserServices } from "./user.service";
 
-const getProfileInformation = catchAsync(async (req: Request, res: Response) => {
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   const { userId } = (req as JwtPayload).user;
-  const result = await UserServices.getProfileInformationFromDB(userId);
+  const result = await UserServices.getMyProfileFromDB(userId);
 
   sendResponse(res, {
     success: true,
@@ -16,9 +16,9 @@ const getProfileInformation = catchAsync(async (req: Request, res: Response) => 
   });
 });
 
-const updateUserInformation = catchAsync(async (req: Request, res: Response) => {
-  const { userId } = (req as JwtPayload).user;
-  const result = await UserServices.updateUserInformationInto(userId, req.body);
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as JwtPayload).user;
+  const result = await UserServices.updateMyProfileInto(user, req);
 
   sendResponse(res, {
     success: true,
@@ -29,6 +29,6 @@ const updateUserInformation = catchAsync(async (req: Request, res: Response) => 
 });
 
 export const UserControllers = {
-  getProfileInformation,
-  updateUserInformation,
+  getMyProfile,
+  updateMyProfile,
 };

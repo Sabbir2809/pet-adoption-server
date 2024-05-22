@@ -1,6 +1,10 @@
+import { UserRole } from "@prisma/client";
+import { Request } from "express";
+import { JwtPayload } from "jsonwebtoken";
+import { fileUploader } from "../../utils/fileUploader";
 import prisma from "../../utils/prisma";
 
-const getProfileInformationFromDB = async (userId: string) => {
+const getMyProfileFromDB = async (userId: string) => {
   const result = await prisma.user.findUniqueOrThrow({
     where: {
       id: userId,
@@ -9,6 +13,11 @@ const getProfileInformationFromDB = async (userId: string) => {
       id: true,
       username: true,
       email: true,
+      needPasswordChange: true,
+      role: true,
+      phone: true,
+      address: true,
+      avatarURL: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -16,40 +25,44 @@ const getProfileInformationFromDB = async (userId: string) => {
   return result;
 };
 
-const updateUserInformationInto = async (
-  userId: string,
-  payload: { username: string; email: string }
-) => {
-  const { username, email } = payload;
-
+const updateMyProfileInto = async (user: JwtPayload, req: Request) => {
   // check valid user
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
-      id: userId,
+      id: user.userId,
+      isActive: true,
     },
   });
 
-  // update user information
-  const result = await prisma.user.update({
-    where: {
-      id: userData.id,
-    },
-    data: {
-      username,
-      email,
-    },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-  return result;
+  const file = req.file;
+  if (file) {
+    const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
+    req.body.avatarURL = uploadToCloudinary?.secure_url;
+  }
+
+  let profileUpdateInfo;
+  if (userData.role === UserRole.ADMIN) {
+    profileUpdateInfo = await prisma.user.update({
+      where: {
+        id: userData.id,
+      },
+      data: req.body,
+    });
+  } else if (userData.role === UserRole.USER) {
+    profileUpdateInfo = await prisma.user.update({
+      where: {
+        id: userData.id,
+      },
+      data: req.body,
+    });
+  }
+
+  return {
+    ...profileUpdateInfo,
+  };
 };
 
 export const UserServices = {
-  getProfileInformationFromDB,
-  updateUserInformationInto,
+  getMyProfileFromDB,
+  updateMyProfileInto,
 };
