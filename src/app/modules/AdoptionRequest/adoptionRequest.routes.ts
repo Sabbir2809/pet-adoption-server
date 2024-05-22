@@ -7,29 +7,29 @@ import { AdoptionRequestValidationSchemes } from "./adoptionRequest.validation";
 const adoptionRequestRouter = Router();
 
 // Get Adoption Requests
-// Endpoint: GET - BASE-URL/api/v1/adoption-requests
+// Endpoint: GET - BASE-URL/api/v1/adoption/requests
 // Request Headers: Authorization: <JWT_TOKEN>
 adoptionRequestRouter.get(
-  "/adoption-requests",
+  "/requests",
   checkAuth(UserRole.ADMIN),
   AdoptionRequestControllers.getAllAdoptionRequests
 );
 
 // Submit Adoption Request
-// Endpoint: POST - BASE-URL/api/v1/adoption-requests
+// Endpoint: POST - BASE-URL/api/v1/adoption/requests
 // Request Headers: Authorization: <JWT_TOKEN>
 adoptionRequestRouter.post(
-  "/adoption-request",
+  "/request",
   checkAuth(UserRole.USER),
   validationRequest(AdoptionRequestValidationSchemes.submitAdoptionRequest),
   AdoptionRequestControllers.submitAdoptionRequest
 );
 
 // Update Adoption Request Status
-// Endpoint: PUT - BASE-URL/api/v1/adoption-requests/:requestId
+// Endpoint: PUT - BASE-URL/api/v1/adoption/request/:requestId
 // Request Headers: Authorization: <JWT_TOKEN>
 adoptionRequestRouter.put(
-  "/adoption-requests/:requestId",
+  "/request/:id",
   checkAuth(UserRole.ADMIN),
   validationRequest(AdoptionRequestValidationSchemes.updateSubmitAdoptionRequestStatus),
   AdoptionRequestControllers.updateAdoptionRequestStatus
