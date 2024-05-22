@@ -27,4 +27,10 @@ userRouter.patch(
   }
 );
 
+userRouter.get("/all", checkAuth(UserRole.ADMIN), UserControllers.getAllUser);
+
+userRouter.patch("/:id/role", checkAuth(UserRole.ADMIN), UserControllers.changeProfileRole);
+
+userRouter.patch("/:id/status", checkAuth(UserRole.ADMIN), UserControllers.changeProfileStatus);
+
 export const UserRoutes = userRouter;
