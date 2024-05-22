@@ -1,10 +1,10 @@
-export type TErrorResponse = {
+export type IGenericErrorResponse = {
   statusCode: number;
   message: string;
-  errorDetails: any;
+  errorMessages: IGenericErrorMessage[];
 };
 
-export type TErrorDetails = {
-  field: string | number;
+export type IGenericErrorMessage = {
+  path: string | number;
   message: string;
-}[];
+};

@@ -1,23 +1,18 @@
 import { ZodError, ZodIssue } from "zod";
-import { TErrorDetails } from "../types/error";
+import { IGenericErrorMessage, IGenericErrorResponse } from "../types/error";
 
-const handleZodError = (error: ZodError) => {
-  const statusCode = 400;
-  const errorMessage = error.errors.map((item) => `${item.message}`).join(". ");
-
-  const errorDetails: TErrorDetails = error.issues.map((issue: ZodIssue) => {
+const handleZodError = (error: ZodError): IGenericErrorResponse => {
+  const errors: IGenericErrorMessage[] = error.issues.map((issue: ZodIssue) => {
     return {
-      field: issue?.path[issue.path.length - 1],
-      message: issue.message,
+      path: issue?.path[issue.path.length - 1],
+      message: issue?.message,
     };
   });
 
   return {
-    statusCode,
-    message: errorMessage,
-    errorDetails: {
-      issues: errorDetails,
-    },
+    statusCode: 400,
+    message: "Validation Error",
+    errorMessages: errors,
   };
 };
 

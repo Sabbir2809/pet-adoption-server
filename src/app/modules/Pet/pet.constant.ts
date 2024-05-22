@@ -5,8 +5,9 @@ export const petFilterableFields: string[] = [
   "age",
   "size",
   "location",
+  "gender",
   "searchTerm",
 ];
 
 // only for search term
-export const petSearchAbleFields: string[] = ["species", "breed", "location"];
+export const petSearchAbleFields: string[] = ["species", "breed", "age", "location"];

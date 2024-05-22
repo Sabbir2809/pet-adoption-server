@@ -1,52 +1,76 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import config from "../config";
 import AppError from "../errors/AppError";
-import handleDuplicateError from "../errors/handleDuplicateError";
+import handleClientError from "../errors/HandleClientError";
+import handleValidationError from "../errors/handleValidationError";
 import handleZodError from "../errors/handleZodError";
-import { TErrorResponse } from "../types/error";
+import { IGenericErrorMessage } from "../types/error";
 
 // global Error Handler
 const globalErrorHandler: ErrorRequestHandler = (
-  error: any,
+  error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  // default object
-  const errorResponse: TErrorResponse = {
-    statusCode: error.statusCode || 500,
-    message: error.message || "Internal Server Error",
-    errorDetails: error,
-  };
+  let statusCode = 500;
+  let message = "Internal Server Error!";
+  let errorMessages: IGenericErrorMessage[] = [];
 
+  // PrismaClientValidationError
+  if (error instanceof Prisma.PrismaClientValidationError) {
+    const simplifiedError = handleValidationError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessages = simplifiedError.errorMessages;
+  }
   // ZodError
-  if (error instanceof ZodError) {
-    const zodError = handleZodError(error);
-    errorResponse.statusCode = zodError.statusCode;
-    errorResponse.message = zodError.message;
-    errorResponse.errorDetails = zodError.errorDetails;
+  else if (error instanceof ZodError) {
+    const simplifiedError = handleZodError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessages = simplifiedError.errorMessages;
   }
-  // DuplicateError
-  else if (error instanceof PrismaClientKnownRequestError) {
-    const duplicateError = handleDuplicateError(error);
-    errorResponse.statusCode = duplicateError.statusCode;
-    errorResponse.message = duplicateError.message;
-    errorResponse.errorDetails = duplicateError.errorDetails;
+  // PrismaClientKnownRequestError
+  else if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    const simplifiedError = handleClientError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessages = simplifiedError.errorMessages;
   }
-
-  // AppError
+  // ApiError
   else if (error instanceof AppError) {
-    errorResponse.statusCode = error.statusCode;
-    errorResponse.message = error.message;
-    errorResponse.errorDetails = error;
+    statusCode = error?.statusCode;
+    message = error.message;
+    errorMessages = error?.message
+      ? [
+          {
+            path: "",
+            message: error?.message,
+          },
+        ]
+      : [];
+  }
+  // Error
+  else if (error instanceof Error) {
+    message = error?.message;
+    errorMessages = error?.message
+      ? [
+          {
+            path: "",
+            message: error?.message,
+          },
+        ]
+      : [];
   }
 
-  // response error
-  return res.status(errorResponse.statusCode).json({
+  res.status(statusCode).json({
     success: false,
-    message: errorResponse.message,
-    errorDetails: errorResponse.errorDetails,
+    message,
+    errorMessages,
+    stack: config.env !== "production" ? error?.stack : undefined,
   });
 };
 

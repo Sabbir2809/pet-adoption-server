@@ -1,5 +1,8 @@
 import { Pet, Prisma } from "@prisma/client";
+import { Request } from "express";
+import { TFile } from "../../types/cloudinary";
 import { TPaginationOptions } from "../../types/pagination";
+import { fileUploader } from "../../utils/fileUploader";
 import calculatePagination from "../../utils/pagination";
 import prisma from "../../utils/prisma";
 import { petSearchAbleFields } from "./pet.constant";
@@ -9,7 +12,7 @@ const getAllPetsFromDB = async (params: any, options: TPaginationOptions) => {
   const { searchTerm, ...filterData } = params;
   const andConditions: Prisma.PetWhereInput[] = [];
 
-  // only searchTerm apply fields: species, breed, location
+  // only searchTerm apply fields: species, breed, age, location
   if (params.searchTerm) {
     andConditions.push({
       OR: petSearchAbleFields.map((field) => ({
@@ -46,6 +49,17 @@ const getAllPetsFromDB = async (params: any, options: TPaginationOptions) => {
         : {
             createdAt: "desc",
           },
+    select: {
+      id: true,
+      name: true,
+      photos: true,
+      description: true,
+      age: true,
+      breed: true,
+      location: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
 
   // count pet table data
@@ -63,7 +77,25 @@ const getAllPetsFromDB = async (params: any, options: TPaginationOptions) => {
   };
 };
 
-const addPetIntoDB = async (payload: Pet) => {
+const getPetDetailsFromDB = async (petId: string) => {
+  // find many
+  const result = await prisma.pet.findUniqueOrThrow({
+    where: {
+      id: petId,
+    },
+  });
+
+  return result;
+};
+
+const addPetIntoDB = async (req: Request) => {
+  const payload = req.body;
+
+  // image upload to cloudinary
+  const file = req.file as TFile;
+  const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
+  payload.photos.push(uploadToCloudinary?.secure_url);
+
   const result = await prisma.pet.create({
     data: payload,
   });
@@ -90,4 +122,5 @@ export const PetServices = {
   addPetIntoDB,
   updatePetProfileIntoDB,
   getAllPetsFromDB,
+  getPetDetailsFromDB,
 };
