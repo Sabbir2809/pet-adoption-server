@@ -1,7 +1,6 @@
 import { UserRole } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
 import checkAuth from "../../middlewares/CheckAuth";
-import validationRequest from "../../middlewares/validationRequest";
 import { fileUploader } from "../../utils/fileUploader";
 import { PetControllers } from "./pet.controller";
 import { PetValidationSchemas } from "./pet.validation";
@@ -29,13 +28,16 @@ petRoute.post(
 );
 
 // Update Pet profile
-// Endpoint: PUT - BASE-URL/api/v1/pets/:petId
+// Endpoint: PATCH - BASE-URL/api/v1/pets/:petId
 // Request Headers: Authorization: <JWT_TOKEN>
-petRoute.put(
+petRoute.patch(
   "/:petId",
   checkAuth(UserRole.ADMIN),
-  validationRequest(PetValidationSchemas.updatePetProfile),
-  PetControllers.updatePetProfile
+  fileUploader.upload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    return PetControllers.updatePetProfile(req, res, next);
+  }
 );
 
 export const PetRoutes = petRoute;

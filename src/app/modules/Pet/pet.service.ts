@@ -1,4 +1,4 @@
-import { Pet, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { Request } from "express";
 import { TFile } from "../../types/cloudinary";
 import { TPaginationOptions } from "../../types/pagination";
@@ -102,20 +102,29 @@ const addPetIntoDB = async (req: Request) => {
   return result;
 };
 
-const updatePetProfileIntoDB = async (petId: string, payload: Partial<Pet>) => {
+const updatePetProfileIntoDB = async (petId: string, req: Request) => {
   const petData = await prisma.pet.findUniqueOrThrow({
     where: {
       id: petId,
     },
   });
 
+  const file = req.file;
+  if (file) {
+    const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
+    req.body.photos.push(uploadToCloudinary?.secure_url);
+  }
+
   const result = await prisma.pet.update({
     where: {
       id: petData.id,
     },
-    data: payload,
+    data: req.body,
   });
-  return result;
+
+  return {
+    ...result,
+  };
 };
 
 export const PetServices = {

@@ -42,7 +42,7 @@ const addPet = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updatePetProfile = catchAsync(async (req: Request, res: Response) => {
-  const result = await PetServices.updatePetProfileIntoDB(req.params.petId, req.body);
+  const result = await PetServices.updatePetProfileIntoDB(req.params.petId, req);
 
   sendResponse(res, {
     success: true,
