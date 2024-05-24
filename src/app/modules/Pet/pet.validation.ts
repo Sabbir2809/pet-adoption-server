@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const addPet = z.object({
   name: z.string({ required_error: "Name Field is Required" }),
-  photos: z.array(z.string()),
+  photos: z.string({ required_error: "photos Field is Required" }),
   species: z.string({ required_error: "Species Field is Required" }),
   breed: z.string({ required_error: "Breed Field is Required" }),
   gender: z.enum([Gender.MALE, Gender.FEMALE]),
@@ -18,7 +18,7 @@ const addPet = z.object({
 
 const updatePetProfile = z.object({
   name: z.string({ required_error: "Name Field is Required" }).optional(),
-  photos: z.array(z.string()).optional(),
+  photos: z.string({ required_error: "photos Field is Required" }).optional(),
   species: z.string({ required_error: "Species Field is Required" }).optional(),
   breed: z.string({ required_error: "Breed Field is Required" }).optional(),
   gender: z.enum([Gender.MALE, Gender.FEMALE]).optional(),

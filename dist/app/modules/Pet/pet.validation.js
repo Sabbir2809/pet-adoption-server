@@ -5,7 +5,7 @@ const client_1 = require("@prisma/client");
 const zod_1 = require("zod");
 const addPet = zod_1.z.object({
     name: zod_1.z.string({ required_error: "Name Field is Required" }),
-    photos: zod_1.z.array(zod_1.z.string()),
+    photos: zod_1.z.string({ required_error: "photos Field is Required" }),
     species: zod_1.z.string({ required_error: "Species Field is Required" }),
     breed: zod_1.z.string({ required_error: "Breed Field is Required" }),
     gender: zod_1.z.enum([client_1.Gender.MALE, client_1.Gender.FEMALE]),
@@ -19,7 +19,7 @@ const addPet = zod_1.z.object({
 });
 const updatePetProfile = zod_1.z.object({
     name: zod_1.z.string({ required_error: "Name Field is Required" }).optional(),
-    photos: zod_1.z.array(zod_1.z.string()).optional(),
+    photos: zod_1.z.string({ required_error: "photos Field is Required" }).optional(),
     species: zod_1.z.string({ required_error: "Species Field is Required" }).optional(),
     breed: zod_1.z.string({ required_error: "Breed Field is Required" }).optional(),
     gender: zod_1.z.enum([client_1.Gender.MALE, client_1.Gender.FEMALE]).optional(),
