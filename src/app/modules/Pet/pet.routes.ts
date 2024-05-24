@@ -12,11 +12,12 @@ petRoute.get("/", PetControllers.getAllPets);
 
 // Get Paginated and Filtered Pets
 // Endpoint: GET - BASE-URL/api/v1/pets
+// Request Headers: Authorization: <ADMIN_TOKEN/USER_TOKEN>
 petRoute.get("/:petId", checkAuth(UserRole.ADMIN, UserRole.USER), PetControllers.getPetDetails);
 
 // Add a Pet
 // Endpoint: POST - BASE-URL/api/v1/pets
-// Request Headers: Authorization: <JWT_TOKEN>
+// Request Headers: Authorization: <ADMIN_TOKEN>
 petRoute.post(
   "/",
   checkAuth(UserRole.ADMIN),
@@ -29,7 +30,7 @@ petRoute.post(
 
 // Update Pet profile
 // Endpoint: PATCH - BASE-URL/api/v1/pets/:petId
-// Request Headers: Authorization: <JWT_TOKEN>
+// Request Headers: Authorization: <ADMIN_TOKEN>
 petRoute.patch(
   "/:petId",
   checkAuth(UserRole.ADMIN),
@@ -42,7 +43,7 @@ petRoute.patch(
 
 // Delete Pet profile
 // Endpoint: PATCH - BASE-URL/api/v1/pets/:petId
-// Request Headers: Authorization: <JWT_TOKEN>
+// Request Headers: Authorization: <ADMIN_TOKEN>
 petRoute.delete("/:petId", checkAuth(UserRole.ADMIN), PetControllers.deletePetProfile);
 
 export const PetRoutes = petRoute;

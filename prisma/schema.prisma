@@ -29,7 +29,7 @@ model User {
 model Pet {
   id                   String            @id @default(uuid())
   name                 String
-  photos               String[]
+  photos               String
   description          String
   age                  Int
   breed                String
@@ -54,7 +54,6 @@ model AdoptionRequest {
   adoptionStatus         AdoptionStatus @default(PENDING)
   petOwnershipExperience String
   additionalInfo         String?
-  agreedToTerms          Boolean        @default(false)
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
 

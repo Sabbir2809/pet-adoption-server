@@ -20,6 +20,7 @@ authRoute.post("/login", AuthControllers.login);
 
 // Refresh Token
 // Endpoint: POST - BASE-URL/api/v1/auth/refresh-token
+// Request Headers: Authorization: <ADMIN_TOKEN/USER_TOKEN>
 authRoute.post(
   "/refresh-token",
   validationRequest(AuthValidationSchemas.refreshToken),
@@ -29,6 +30,7 @@ authRoute.post(
 
 // Change Password
 // Endpoint: POST - BASE-URL/api/v1/auth/refresh-token
+// Request Headers: Authorization: <ADMIN_TOKEN/USER_TOKEN>
 authRoute.post(
   "/change-password",
   validationRequest(AuthValidationSchemas.changePassword),

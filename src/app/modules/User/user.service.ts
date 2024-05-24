@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { AdoptionStatus, UserRole } from "@prisma/client";
 import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import { TPaginationOptions } from "../../types/pagination";
@@ -6,6 +6,7 @@ import { fileUploader } from "../../utils/fileUploader";
 import calculatePagination from "../../utils/pagination";
 import prisma from "../../utils/prisma";
 import { userSearchAbleFields } from "./user.constant";
+import { getPieChartData } from "./user.util";
 
 const getMyProfileFromDB = async (userId: string) => {
   const result = await prisma.user.findUniqueOrThrow({
@@ -189,10 +190,33 @@ const changeProfileStatusIntoDB = async (id: string, status: boolean) => {
   return updateUserRole;
 };
 
+const getAdminMetadata = async () => {
+  const petCount = await prisma.pet.count();
+  const userCount = await prisma.user.count();
+  const approvedCount = await prisma.adoptionRequest.aggregate({
+    _count: {
+      userId: true,
+    },
+    where: {
+      adoptionStatus: AdoptionStatus.APPROVED,
+    },
+  });
+
+  const pieChartData = await getPieChartData();
+
+  return {
+    petCount,
+    userCount,
+    approvedCount,
+    pieChartData,
+  };
+};
+
 export const UserServices = {
   getMyProfileFromDB,
   updateMyProfileInto,
   getAllUserFormDB,
   changeProfileRoleIntoDB,
   changeProfileStatusIntoDB,
+  getAdminMetadata,
 };

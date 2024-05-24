@@ -8,7 +8,7 @@ const adoptionRequestRouter = Router();
 
 // Get Adoption Requests
 // Endpoint: GET - BASE-URL/api/v1/adoption/requests
-// Request Headers: Authorization: <JWT_TOKEN>
+// Request Headers: Authorization: <USER_TOKEN>
 adoptionRequestRouter.get(
   "/requests",
   checkAuth(UserRole.ADMIN),
@@ -17,7 +17,7 @@ adoptionRequestRouter.get(
 
 // Submit Adoption Request
 // Endpoint: POST - BASE-URL/api/v1/adoption/requests
-// Request Headers: Authorization: <JWT_TOKEN>
+// Request Headers: Authorization: <USER_TOKEN>
 adoptionRequestRouter.post(
   "/request",
   checkAuth(UserRole.USER),
@@ -27,7 +27,7 @@ adoptionRequestRouter.post(
 
 // Update Adoption Request Status
 // Endpoint: PATCH - BASE-URL/api/v1/adoption/request/:id
-// Request Headers: Authorization: <JWT_TOKEN>
+// Request Headers: Authorization: <ADMIN_TOKEN>
 adoptionRequestRouter.patch(
   "/request/:id",
   checkAuth(UserRole.ADMIN),

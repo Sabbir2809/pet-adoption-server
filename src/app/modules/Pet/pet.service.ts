@@ -95,7 +95,7 @@ const addPetIntoDB = async (req: Request) => {
   // image upload to cloudinary
   const file = req.file as TFile;
   const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
-  payload.photos.push(uploadToCloudinary?.secure_url);
+  payload.photos = uploadToCloudinary?.secure_url;
 
   const result = await prisma.pet.create({
     data: payload,
@@ -113,7 +113,7 @@ const updatePetProfileIntoDB = async (petId: string, req: Request) => {
   const file = req.file;
   if (file) {
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
-    req.body.photos.push(uploadToCloudinary?.secure_url);
+    req.body.photos = uploadToCloudinary?.secure_url;
   }
 
   const result = await prisma.pet.update({

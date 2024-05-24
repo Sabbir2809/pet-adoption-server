@@ -66,10 +66,22 @@ const changeProfileStatus = catchAsync(async (req, res) => {
   });
 });
 
+const dashboardMetadata = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getAdminMetadata();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "User profile retrieved successfully",
+    data: result,
+  });
+});
+
 export const UserControllers = {
   getMyProfile,
   updateMyProfile,
   getAllUser,
   changeProfileRole,
   changeProfileStatus,
+  dashboardMetadata,
 };
