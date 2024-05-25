@@ -16,6 +16,7 @@ model User {
   needPasswordChange Boolean           @default(true)
   role               UserRole          @default(USER)
   isActive           Boolean           @default(true)
+  gender             Gender?
   phone              String?
   address            String?
   avatarURL          String?
