@@ -25,6 +25,7 @@ const getMyProfileFromDB = async (userId: string) => {
       avatarURL: true,
       adoptionRequests: {
         select: {
+          id: true,
           adoptionStatus: true,
           pet: {
             select: {

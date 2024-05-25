@@ -45,9 +45,21 @@ const getMyProfileFromDB = (userId) => __awaiter(void 0, void 0, void 0, functio
             phone: true,
             address: true,
             avatarURL: true,
-            adoptionRequests: true,
-            createdAt: true,
-            updatedAt: true,
+            adoptionRequests: {
+                select: {
+                    id: true,
+                    adoptionStatus: true,
+                    pet: {
+                        select: {
+                            name: true,
+                            photos: true,
+                            location: true,
+                            gender: true,
+                            age: true,
+                        },
+                    },
+                },
+            },
         },
     });
     return result;
