@@ -23,11 +23,23 @@ const getMyProfileFromDB = async (userId: string) => {
       phone: true,
       address: true,
       avatarURL: true,
-      adoptionRequests: true,
-      createdAt: true,
-      updatedAt: true,
+      adoptionRequests: {
+        select: {
+          adoptionStatus: true,
+          pet: {
+            select: {
+              name: true,
+              photos: true,
+              location: true,
+              gender: true,
+              age: true,
+            },
+          },
+        },
+      },
     },
   });
+
   return result;
 };
 
