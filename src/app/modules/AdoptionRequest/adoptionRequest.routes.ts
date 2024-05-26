@@ -31,7 +31,7 @@ adoptionRequestRouter.post(
 adoptionRequestRouter.patch(
   "/request/:id",
   checkAuth(UserRole.ADMIN),
-  validationRequest(AdoptionRequestValidationSchemes.updateSubmitAdoptionRequestStatus),
+  validationRequest(AdoptionRequestValidationSchemes.updateAdoptionRequestStatus),
   AdoptionRequestControllers.updateAdoptionRequestStatus
 );
 

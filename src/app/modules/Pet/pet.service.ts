@@ -50,17 +50,6 @@ const getAllPetsFromDB = async (params: any, options: TPaginationOptions) => {
         : {
             createdAt: "desc",
           },
-    select: {
-      id: true,
-      name: true,
-      photos: true,
-      description: true,
-      age: true,
-      breed: true,
-      location: true,
-      createdAt: true,
-      updatedAt: true,
-    },
   });
 
   // count pet table data
