@@ -53,10 +53,12 @@ const getAllAdoptionRequestsFromDB = (params, options) => __awaiter(void 0, void
                 createdAt: "desc",
             },
         select: {
+            id: true,
             adoptionStatus: true,
             additionalInfo: true,
             pet: {
                 select: {
+                    id: true,
                     name: true,
                     photos: true,
                     location: true,
@@ -64,6 +66,7 @@ const getAllAdoptionRequestsFromDB = (params, options) => __awaiter(void 0, void
             },
             user: {
                 select: {
+                    id: true,
                     username: true,
                     email: true,
                     phone: true,
