@@ -34,7 +34,16 @@ const getAllAdoptionRequestsFromDB = async (params: any, options: TPaginationOpt
         : {
             createdAt: "desc",
           },
-    include: {
+    select: {
+      adoptionStatus: true,
+      additionalInfo: true,
+      pet: {
+        select: {
+          name: true,
+          photos: true,
+          location: true,
+        },
+      },
       user: {
         select: {
           username: true,

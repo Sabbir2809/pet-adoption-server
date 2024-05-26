@@ -52,7 +52,16 @@ const getAllAdoptionRequestsFromDB = (params, options) => __awaiter(void 0, void
             : {
                 createdAt: "desc",
             },
-        include: {
+        select: {
+            adoptionStatus: true,
+            additionalInfo: true,
+            pet: {
+                select: {
+                    name: true,
+                    photos: true,
+                    location: true,
+                },
+            },
             user: {
                 select: {
                     username: true,
