@@ -10,12 +10,12 @@ const submitAdoptionRequest = zod_1.z.object({
         }),
     }),
 });
-const updateSubmitAdoptionRequestStatus = zod_1.z.object({
+const updateAdoptionRequestStatus = zod_1.z.object({
     body: zod_1.z.object({
         adoptionStatus: zod_1.z.string({ required_error: "adoptionStatus Field is Required" }),
     }),
 });
 exports.AdoptionRequestValidationSchemes = {
     submitAdoptionRequest,
-    updateSubmitAdoptionRequestStatus,
+    updateAdoptionRequestStatus,
 };

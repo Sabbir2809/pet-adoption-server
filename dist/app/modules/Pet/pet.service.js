@@ -67,17 +67,6 @@ const getAllPetsFromDB = (params, options) => __awaiter(void 0, void 0, void 0, 
             : {
                 createdAt: "desc",
             },
-        select: {
-            id: true,
-            name: true,
-            photos: true,
-            description: true,
-            age: true,
-            breed: true,
-            location: true,
-            createdAt: true,
-            updatedAt: true,
-        },
     });
     // count pet table data
     const total = yield prisma_1.default.pet.count({

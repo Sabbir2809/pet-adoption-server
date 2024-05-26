@@ -22,5 +22,5 @@ adoptionRequestRouter.post("/request", (0, CheckAuth_1.default)(client_1.UserRol
 // Update Adoption Request Status
 // Endpoint: PATCH - BASE-URL/api/v1/adoption/request/:id
 // Request Headers: Authorization: <ADMIN_TOKEN>
-adoptionRequestRouter.patch("/request/:id", (0, CheckAuth_1.default)(client_1.UserRole.ADMIN), (0, validationRequest_1.default)(adoptionRequest_validation_1.AdoptionRequestValidationSchemes.updateSubmitAdoptionRequestStatus), adoptionRequest_controller_1.AdoptionRequestControllers.updateAdoptionRequestStatus);
+adoptionRequestRouter.patch("/request/:id", (0, CheckAuth_1.default)(client_1.UserRole.ADMIN), (0, validationRequest_1.default)(adoptionRequest_validation_1.AdoptionRequestValidationSchemes.updateAdoptionRequestStatus), adoptionRequest_controller_1.AdoptionRequestControllers.updateAdoptionRequestStatus);
 exports.adoptionRequestRoutes = adoptionRequestRouter;
