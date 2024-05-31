@@ -45,7 +45,7 @@ const getMyProfileFromDB = async (userId: string) => {
 };
 
 const updateMyProfileInto = async (user: JwtPayload, req: Request) => {
-  // check valid user
+  // Check if the user is valid and active
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
       id: user.userId,
@@ -53,28 +53,30 @@ const updateMyProfileInto = async (user: JwtPayload, req: Request) => {
     },
   });
 
+  // Handle file upload
   const file = req.file;
   if (file) {
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
     req.body.avatarURL = uploadToCloudinary?.secure_url;
   }
 
-  let profileUpdateInfo;
-  if (userData.role === UserRole.ADMIN) {
-    profileUpdateInfo = await prisma.user.update({
-      where: {
-        id: userData.id,
-      },
-      data: req.body,
-    });
-  } else if (userData.role === UserRole.USER) {
-    profileUpdateInfo = await prisma.user.update({
-      where: {
-        id: userData.id,
-      },
-      data: req.body,
-    });
-  }
+  // Create an update object
+  const updateData = {
+    username: req.body.username,
+    email: req.body.email,
+    phone: req.body.phone,
+    address: req.body.address,
+    gender: req.body.gender,
+    avatarURL: req.body.avatarURL,
+  };
+
+  // Ensure that only valid fields are updated
+  const profileUpdateInfo = await prisma.user.update({
+    where: {
+      id: userData.id,
+    },
+    data: updateData,
+  });
 
   return {
     ...profileUpdateInfo,

@@ -65,35 +65,35 @@ const getMyProfileFromDB = (userId) => __awaiter(void 0, void 0, void 0, functio
     return result;
 });
 const updateMyProfileInto = (user, req) => __awaiter(void 0, void 0, void 0, function* () {
-    // check valid user
+    // Check if the user is valid and active
     const userData = yield prisma_1.default.user.findUniqueOrThrow({
         where: {
             id: user.userId,
             isActive: true,
         },
     });
+    // Handle file upload
     const file = req.file;
     if (file) {
         const uploadToCloudinary = yield fileUploader_1.fileUploader.uploadToCloudinary(file);
         req.body.avatarURL = uploadToCloudinary === null || uploadToCloudinary === void 0 ? void 0 : uploadToCloudinary.secure_url;
     }
-    let profileUpdateInfo;
-    if (userData.role === client_1.UserRole.ADMIN) {
-        profileUpdateInfo = yield prisma_1.default.user.update({
-            where: {
-                id: userData.id,
-            },
-            data: req.body,
-        });
-    }
-    else if (userData.role === client_1.UserRole.USER) {
-        profileUpdateInfo = yield prisma_1.default.user.update({
-            where: {
-                id: userData.id,
-            },
-            data: req.body,
-        });
-    }
+    // Create an update object
+    const updateData = {
+        username: req.body.username,
+        email: req.body.email,
+        phone: req.body.phone,
+        address: req.body.address,
+        gender: req.body.gender,
+        avatarURL: req.body.avatarURL,
+    };
+    // Ensure that only valid fields are updated
+    const profileUpdateInfo = yield prisma_1.default.user.update({
+        where: {
+            id: userData.id,
+        },
+        data: updateData,
+    });
     return Object.assign({}, profileUpdateInfo);
 });
 const getAllUserFormDB = (params, options) => __awaiter(void 0, void 0, void 0, function* () {
