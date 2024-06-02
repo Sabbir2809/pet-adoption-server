@@ -13,33 +13,30 @@ const getAllPetsFromDB = async (params: any, options: TPaginationOptions) => {
   const { searchTerm, ...filterData } = params;
   const andConditions: Prisma.PetWhereInput[] = [];
 
-  // only searchTerm apply fields: species, breed, age, location
-  if (params.searchTerm) {
+  if (searchTerm) {
     andConditions.push({
       OR: petSearchAbleFields.map((field) => ({
         [field]: {
-          contains: params.searchTerm,
+          contains: searchTerm,
           mode: "insensitive",
         },
       })),
     });
   }
-  // specific field for apply filter: ["species","breed",  "age",  "size",  "location",  "searchTerm"]
-  if (Object.keys(filterData).length > 0) {
-    andConditions.push({
-      AND: Object.keys(filterData).map((key) => ({
-        [key]: {
-          equals: (filterData as any)[key],
-        },
-      })),
-    });
-  }
 
-  const whereConditions = andConditions.length > 0 ? { AND: andConditions } : {};
+  // if (Object.keys(filterData).length > 0) {
+  //   andConditions.push({
+  //     AND: Object.keys(filterData).map((key) => ({
+  //       [key]: {
+  //         equals: (filterData as any)[key],
+  //       },
+  //     })),
+  //   });
+  // }
 
   // find many
   const result = await prisma.pet.findMany({
-    where: whereConditions,
+    where: { AND: andConditions },
     skip,
     take: limit,
     orderBy:
@@ -54,7 +51,7 @@ const getAllPetsFromDB = async (params: any, options: TPaginationOptions) => {
 
   // count pet table data
   const total = await prisma.pet.count({
-    where: whereConditions,
+    where: { AND: andConditions },
   });
 
   return {

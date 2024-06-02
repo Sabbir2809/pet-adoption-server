@@ -1,13 +1,5 @@
 // for all filtering
-export const petFilterableFields: string[] = [
-  "species",
-  "breed",
-  "age",
-  "size",
-  "location",
-  "gender",
-  "searchTerm",
-];
+export const petFilterableFields: string[] = ["searchTerm"];
 
 // only for search term
-export const petSearchAbleFields: string[] = ["species", "breed", "age", "location"];
+export const petSearchAbleFields: string[] = ["name", "species", "breed", "location"];
