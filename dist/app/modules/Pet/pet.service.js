@@ -33,31 +33,28 @@ const getAllPetsFromDB = (params, options) => __awaiter(void 0, void 0, void 0, 
     const { page, limit, skip } = (0, pagination_1.default)(options);
     const { searchTerm } = params, filterData = __rest(params, ["searchTerm"]);
     const andConditions = [];
-    // only searchTerm apply fields: species, breed, age, location
-    if (params.searchTerm) {
+    if (searchTerm) {
         andConditions.push({
             OR: pet_constant_1.petSearchAbleFields.map((field) => ({
                 [field]: {
-                    contains: params.searchTerm,
+                    contains: searchTerm,
                     mode: "insensitive",
                 },
             })),
         });
     }
-    // specific field for apply filter: ["species","breed",  "age",  "size",  "location",  "searchTerm"]
-    if (Object.keys(filterData).length > 0) {
-        andConditions.push({
-            AND: Object.keys(filterData).map((key) => ({
-                [key]: {
-                    equals: filterData[key],
-                },
-            })),
-        });
-    }
-    const whereConditions = andConditions.length > 0 ? { AND: andConditions } : {};
+    // if (Object.keys(filterData).length > 0) {
+    //   andConditions.push({
+    //     AND: Object.keys(filterData).map((key) => ({
+    //       [key]: {
+    //         equals: (filterData as any)[key],
+    //       },
+    //     })),
+    //   });
+    // }
     // find many
     const result = yield prisma_1.default.pet.findMany({
-        where: whereConditions,
+        where: { AND: andConditions },
         skip,
         take: limit,
         orderBy: options.sortBy && options.sortOrder
@@ -70,7 +67,7 @@ const getAllPetsFromDB = (params, options) => __awaiter(void 0, void 0, void 0, 
     });
     // count pet table data
     const total = yield prisma_1.default.pet.count({
-        where: whereConditions,
+        where: { AND: andConditions },
     });
     return {
         meta: {
